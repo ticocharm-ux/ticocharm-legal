@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicoCharm - Agencia de Turismo Automatizada</title>
+    <meta name="description" content="Sitio oficial de TicoCharm, agencia de turismo automatizada especializada en experiencias únicas en Costa Rica.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 50px 40px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .description {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 40px;
+            line-height: 1.8;
+            text-align: left;
+        }
+        .links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .links a {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1rem;
+        }
+        .links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 25px;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+            .tagline {
+                font-size: 1rem;
+            }
+            .links {
+                flex-direction: column;
+            }
+            .links a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">TicoCharm</div>
+        <div class="tagline">Agencia de Turismo Automatizada</div>
+        <p class="description">
+            TicoCharm es una agencia de turismo innovadora que combina la magia de Costa Rica con la automatización inteligente. 
+            Creamos experiencias personalizadas e inolvidables, aprovechando la tecnología para planificar cada detalle de tu viaje. 
+            Desde aventuras en la selva hasta relajación en playas paradisíacas, hacemos que tu estadía en Costa Rica sea verdaderamente única.
+        </p>
+        <div class="links">
+            <a href="terms.html">Términos de Servicio</a>
+            <a href="privacy.html">Política de Privacidad</a>
+        </div>
+        <div class="footer">
+            &copy; 2026 TicoCharm. Todos los derechos reservados.
+        </div>
+    </div>
+</body>
+</html>
