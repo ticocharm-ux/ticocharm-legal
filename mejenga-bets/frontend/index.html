@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mejenga.com - Plataforma P2P de Apuestas Deportivas</title>
+    <meta name="description" content="Apuestas deportivas descentralizadas P2P para la Liga Promerica de Costa Rica. En vivo desde tu bar favorito.">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-wood-dark: #2a1b15;
+            --color-wood-light: #442a20;
+            --color-charcoal-dark: #121212;
+            --color-charcoal-card: #1c1c1c;
+            --color-charcoal-light: #2d2d2d;
+            --color-fire-orange: #ff5e00;
+            --color-fire-glow: rgba(255, 94, 0, 0.4);
+            --color-fire-light: #ff7e33;
+            --color-saprissa-wine: #7c1a2f;
+            --color-alajuela-red: #da121a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--color-charcoal-dark);
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar Wood Texture Simulation */
+        header {
+            background: linear-gradient(to bottom, rgba(42, 27, 21, 0.95), rgba(26, 15, 11, 0.98)),
+                        repeating-linear-gradient(45deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+            border-bottom: 3px solid var(--color-fire-orange);
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 15px var(--color-fire-glow);
+            z-index: 10;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -1px;
+            text-shadow: 0 0 10px rgba(255, 94, 0, 0.5);
+        }
+
+        .logo-text span {
+            color: var(--color-fire-orange);
+        }
+
+        .bar-badge {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .bar-badge i {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .bar-info {
+            text-align: left;
+        }
+
+        .bar-subtitle {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        .bar-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Nav links */
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #bbb;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        nav a.active {
+            color: var(--color-fire-orange);
+            background-color: rgba(255, 94, 0, 0.1);
+            border-bottom: 2px solid var(--color-fire-orange);
+        }
+
+        nav a:hover:not(.active) {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Main Container Layout */
+        .main-layout {
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 25px;
+            flex-grow: 1;
+        }
+
+        /* Card panels */
+        .charcoal-card {
+            background-color: var(--color-charcoal-card);
+            border: 1px solid var(--color-charcoal-light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--color-charcoal-light);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--color-fire-orange);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Banner Partido Destacado */
+        .featured-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800') no-repeat center center;
+            background-size: cover;
+            border: 1px solid var(--color-fire-orange);
+            box-shadow: 0 0 15px rgba(255, 94, 0, 0.15);
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-label {
+            display: inline-block;
+            background-color: var(--color-fire-orange);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 94, 0, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(255, 94, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 94, 0, 0); }
+        }
+
+        .matchup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 15px 0 25px 0;
+        }
+
+        .team-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 180px;
+        }
+
+        .team-logo-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--color-charcoal-light);
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            font-weight: 900;
+            font-size: 2.2rem;
+        }
+
+        .team-logo-saprissa {
+            background-color: var(--color-saprissa-wine);
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .team-logo-alajuelense {
+            background-color: #121212;
+            color: var(--color-alajuela-red);
+            border-color: var(--color-alajuela-red);
+        }
+
+        .team-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .vs-divider {
+            font-size: 1.8rem;
+            font-style: italic;
+            font-weight: 900;
+            color: #888;
+        }
+
+        .match-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .match-date {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-charcoal-light);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            color: #ffaa66;
+            font-weight: 700;
+        }
+
+        .match-league {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Large Action Buttons */
+        .btn-fire {
+            background: linear-gradient(135deg, var(--color-fire-orange) 0%, #ff3300 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-transform: uppercase;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-fire:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 94, 0, 0.6), 0 0 12px var(--color-fire-orange);
+        }
+
+        .btn-fire:active {
+            transform: translateY(0);
+        }
+
+        /* Upcoming matches list */
+        .upcoming-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .upcoming-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-charcoal-light);
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upcoming-item:hover {
+            border-color: var(--color-fire-orange);
+            background-color: rgba(255, 94, 0, 0.05);
+            transform: translateX(3px);
+        }
+
+        .upcoming-teams {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .upcoming-team-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .upcoming-info {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .upcoming-date {
+            font-size: 0.7rem;
+            color: #ffaa66;
+            font-weight: 600;
+        }
+
+        .upcoming-arrow {
+            color: #555;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+
+        .upcoming-item:hover .upcoming-arrow {
+            color: var(--color-fire-orange);
+        }
+
+        /* En la mesa Table Style */
+        .mesa-table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table.mesa-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        table.mesa-table th {
+            color: #888;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--color-charcoal-light);
+            letter-spacing: 0.5px;
+        }
+
+        table.mesa-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            vertical-align: middle;
+        }
+
+        table.mesa-table tr:hover {
+            background-color: rgba(255,255,255,0.01);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-charcoal-light), #111);
+            border: 1px solid var(--color-fire-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--color-fire-orange);
+        }
+
+        .badge-choice {
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--color-charcoal-light);
+        }
+
+        .choice-home { border-color: var(--color-alajuela-red); color: var(--color-alajuela-red); }
+        .choice-away { border-color: var(--color-saprissa-wine); color: #ffaa66; }
+        .choice-draw { border-color: #888; color: #ccc; }
+
+        .currency {
+            font-family: monospace;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .payout-info {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.8rem;
+        }
+
+        .payout-total {
+            font-weight: 700;
+            color: #39d353;
+        }
+
+        .payout-breakdown {
+            font-size: 0.68rem;
+            color: #777;
+            max-width: 250px;
+            line-height: 1.3;
+            margin-top: 2px;
+        }
+
+        .btn-action-icon {
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-icon:hover {
+            color: var(--color-fire-orange);
+            background-color: rgba(255, 94, 0, 0.1);
+        }
+
+        /* Sidebar info panels */
+        .info-sidebar-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--color-fire-orange);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .how-to-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .how-to-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .how-to-number {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: rgba(255, 94, 0, 0.1);
+            border: 1px solid var(--color-fire-orange);
+            color: var(--color-fire-orange);
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .fee-disclaimer {
+            margin-top: 15px;
+            background-color: rgba(255, 94, 0, 0.03);
+            border: 1px solid rgba(255, 94, 0, 0.1);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.75rem;
+            color: #ffaa66;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .fee-disclaimer i {
+            margin-top: 2px;
+        }
+
+        /* Modal Background Backdrop */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Modal Container (Exact copy of aceptar.webp styling style) */
+        .modal-content {
+            background-color: #ffffff;
+            color: #333333;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            padding: 30px;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            color: #333;
+        }
+
+        /* Confirm Bet UI elements */
+        .success-checkmark-wrapper {
+            margin: 0 auto 15px auto;
+            width: 70px;
+            height: 70px;
+            background-color: #ebfaf0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-checkmark-wrapper i {
+            font-size: 2.2rem;
+            color: #2ec4b6;
+        }
+
+        .confirm-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #111111;
+            margin-bottom: 6px;
+        }
+
+        .confirm-subtitle {
+            font-size: 0.88rem;
+            color: #666666;
+            margin-bottom: 25px;
+        }
+
+        /* Step rows layout */
+        .step-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--color-fire-orange);
+            color: var(--color-fire-orange);
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Step card block details */
+        .match-details-card {
+            background-color: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-details-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .soccer-icon-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e6f0fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0d6efd;
+            font-size: 1.1rem;
+        }
+
+        .match-card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .match-card-league {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #111111;
+        }
+
+        .match-card-teams {
+            font-size: 0.78rem;
+            color: #666666;
+            font-weight: 600;
+        }
+
+        .choice-result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 5px;
+        }
+
+        .choice-label-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-label-wrapper i {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .choice-text-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .choice-title {
+            font-size: 0.75rem;
+            color: #666666;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .choice-value {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #111111;
+        }
+
+        .multiplier-badge {
+            background-color: #eef2ff;
+            color: #4f46e5;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* Step 2 inputs/calculations */
+        .calculation-card {
+            border-top: 1px solid #e1e4e8;
+            border-bottom: 1px solid #e1e4e8;
+            padding: 15px 0;
+            width: 100%;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .calc-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .calc-row-value {
+            font-weight: 800;
+            color: #111;
+            font-family: monospace;
+        }
+
+        /* Step 3 bold total block */
+        .total-payment-card {
+            background-color: #fff8f5;
+            border: 1px solid rgba(255, 94, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-pay-label {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--color-fire-orange);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .total-pay-value {
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: var(--color-fire-orange);
+            font-family: monospace;
+        }
+
+        /* Step 4 confirmation button */
+        .btn-confirm-accept {
+            background: linear-gradient(135deg, var(--color-fire-orange) 0%, #ff4000 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 94, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-confirm-accept:hover {
+            background: linear-gradient(135deg, #ff721a 0%, var(--color-fire-orange) 100%);
+            box-shadow: 0 6px 16px rgba(255, 94, 0, 0.4);
+        }
+
+        .secure-footnote {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        /* Success toast notification */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #1e293b;
+            border-left: 5px solid #10b981;
+            color: #fff;
+            padding: 15px 22px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            color: #10b981;
+            font-size: 1.3rem;
+        }
+
+        /* Bet input selection screen */
+        .select-bet-step {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .modal-title-left {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #111;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .team-selection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .team-option-btn {
+            background-color: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .team-option-btn:hover {
+            border-color: var(--color-fire-orange);
+            background-color: #fffbf9;
+        }
+
+        .team-option-btn.selected {
+            border-color: var(--color-fire-orange);
+            background-color: #fff5f0;
+            color: var(--color-fire-orange);
+            box-shadow: 0 0 0 2px rgba(255, 94, 0, 0.1);
+        }
+
+        .amount-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .amount-input-wrapper input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: monospace;
+            color: #111;
+        }
+
+        .amount-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--color-fire-orange);
+            box-shadow: 0 0 0 2px rgba(255, 94, 0, 0.1);
+        }
+
+        .amount-currency-symbol {
+            position: absolute;
+            left: 15px;
+            font-weight: 800;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .amount-preset-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .preset-btn {
+            background-color: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .preset-btn:hover {
+            border-color: #bbb;
+            color: #111;
+        }
+
+        .btn-form-next {
+            background: linear-gradient(135deg, var(--color-fire-orange) 0%, #ff4000 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-form-next:hover {
+            box-shadow: 0 4px 12px rgba(255, 94, 0, 0.3);
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            background-color: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        /* Footer info */
+        footer {
+            background-color: #0d0d0d;
+            border-top: 1px solid var(--color-charcoal-light);
+            padding: 25px 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: auto;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .logo-section {
+                justify-content: space-between;
+            }
+            nav {
+                justify-content: center;
+            }
+            .matchup-container {
+                gap: 20px;
+            }
+            .team-logo-wrapper {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
+            .team-name {
+                font-size: 0.9rem;
+            }
+            .vs-divider {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section with Wood styling and Bar badge -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="#" class="logo-text">Mejenga<span>.com</span></a>
+                <div class="bar-badge">
+                    <i class="fa-solid fa-horse-shoe"></i>
+                    <div class="bar-info">
+                        <div class="bar-subtitle">Bar & Restaurante</div>
+                        <div class="bar-title">El Estribo</div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <a href="#" class="active"><i class="fa-solid fa-house"></i> Inicio</a>
+                <a href="#"><i class="fa-solid fa-receipt"></i> Mis Apuestas</a>
+                <a href="#"><i class="fa-solid fa-table-list"></i> En la Mesa</a>
+                <a href="#"><i class="fa-solid fa-history"></i> Historial</a>
+                <a href="#"><i class="fa-solid fa-user"></i> Mi Cuenta</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-layout">
+
+        <!-- Left Side Column (Main Dashboard Content) -->
+        <section class="main-content-column">
+
+            <!-- Partido Destacado Banner -->
+            <div class="charcoal-card featured-banner">
+                <div class="banner-label">★ Partido Destacado ★</div>
+                <div class="match-details">
+                    <div class="match-league">Liga Promerica - Semifinal</div>
+                    <div class="match-date"><i class="fa-regular fa-clock"></i> 25 de Mayo, 2024 - 8:00 PM</div>
+                </div>
+
+                <div class="matchup-container">
+                    <div class="team-block">
+                        <div class="team-logo-wrapper team-logo-saprissa">S</div>
+                        <div class="team-name">SAPRISSA</div>
+                    </div>
+                    <div class="vs-divider">VS</div>
+                    <div class="team-block">
+                        <div class="team-logo-wrapper team-logo-alajuelense">LDA</div>
+                        <div class="team-name">ALAJUELENSE</div>
+                    </div>
+                </div>
+
+                <button class="btn-fire" id="btn-open-bet"><i class="fa-solid fa-table"></i> Poner la apuesta sobre la mesa &nbsp;<i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <!-- En la Mesa Section -->
+            <div class="charcoal-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fa-solid fa-people-group"></i> En la Mesa
+                    </div>
+                    <div class="stats-bar" style="margin-bottom: 0; background: none; border: none; padding: 0;">
+                        <span>Total en la mesa: <span style="color: #39d353;" class="currency">₡250,000</span></span>
+                    </div>
+                </div>
+
+                <div class="mesa-table-wrapper">
+                    <table class="mesa-table" id="bets-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Equipo</th>
+                                <th>Apuesta</th>
+                                <th>Ganancia Neta</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">M</div>
+                                        <span>elmanudo</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge-choice choice-home"><i class="fa-solid fa-shield-halved"></i> Ganará Alajuela</span>
+                                </td>
+                                <td class="currency">₡5,000</td>
+                                <td>
+                                    <div class="payout-info">
+                                        <span class="payout-total currency">₡9,000</span>
+                                        <span class="payout-breakdown">(10,000 colones - 1,000 [del 5% de cada jugador, que suma 10%] comisión del contrato)</span>
+                                    </div>
+                                </td>
+                                <td style="text-align: right;">
+                                    <button class="btn-action-icon btn-accept-table" data-match="Saprissa vs Alajuelense" data-team="Ganará Saprissa" data-amount="5000" title="Aceptar Apuesta">
+                                        <i class="fa-solid fa-handshake"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">S</div>
+                                        <span>morados1935</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge-choice choice-away"><i class="fa-solid fa-shield-halved"></i> Ganará Saprissa</span>
+                                </td>
+                                <td class="currency">₡10,000</td>
+                                <td>
+                                    <div class="payout-info">
+                                        <span class="payout-total currency">₡18,000</span>
+                                        <span class="payout-breakdown">(20,000 colones - 2,000 [del 5% de cada jugador, que suma 10%] comisión del contrato)</span>
+                                    </div>
+                                </td>
+                                <td style="text-align: right;">
+                                    <button class="btn-action-icon btn-accept-table" data-match="Saprissa vs Alajuelense" data-team="Ganará Alajuela" data-amount="10000" title="Aceptar Apuesta">
+                                        <i class="fa-solid fa-handshake"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">T</div>
+                                        <span>ticoPuraVida</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge-choice choice-draw"><i class="fa-solid fa-handshake-angle"></i> Empate</span>
+                                </td>
+                                <td class="currency">₡7,500</td>
+                                <td>
+                                    <div class="payout-info">
+                                        <span class="payout-total currency">₡13,500</span>
+                                        <span class="payout-breakdown">(15,000 colones - 1,500 [del 5% de cada jugador, que suma 10%] comisión del contrato)</span>
+                                    </div>
+                                </td>
+                                <td style="text-align: right;">
+                                    <button class="btn-action-icon btn-accept-table" data-match="Saprissa vs Alajuelense" data-team="Ganará Saprissa" data-amount="7500" title="Aceptar Apuesta">
+                                        <i class="fa-solid fa-handshake"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Side Column (Info & Upcoming) -->
+        <aside class="sidebar-column">
+
+            <!-- Próximos Partidos Panel -->
+            <div class="charcoal-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fa-solid fa-calendar-days"></i> Próximos Partidos
+                    </div>
+                </div>
+
+                <div class="upcoming-list">
+                    <div class="upcoming-item class-upcoming-bet" data-home="Cartaginés" data-away="Santos" data-date="26 de Mayo, 2024 - 5:00 PM">
+                        <div class="upcoming-teams">
+                            <div class="upcoming-team-icon" style="background-color: #0056b3;">CSC</div>
+                            <span>vs</span>
+                            <div class="upcoming-team-icon" style="background-color: #c82333;">SAN</div>
+                        </div>
+                        <div class="upcoming-info">
+                            <div class="upcoming-date">26 May, 5:00 PM</div>
+                            <i class="fa-solid fa-chevron-right upcoming-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="upcoming-item class-upcoming-bet" data-home="Herediano" data-away="Guerreros" data-date="26 de Mayo, 2024 - 7:00 PM">
+                        <div class="upcoming-teams">
+                            <div class="upcoming-team-icon" style="background-color: #ffc107; color: #111;">CSH</div>
+                            <span>vs</span>
+                            <div class="upcoming-team-icon" style="background-color: #343a40;">GUE</div>
+                        </div>
+                        <div class="upcoming-info">
+                            <div class="upcoming-date">26 May, 7:00 PM</div>
+                            <i class="fa-solid fa-chevron-right upcoming-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="upcoming-item class-upcoming-bet" data-home="Liberia" data-away="Pérez Zeledón" data-date="27 de Mayo, 2024 - 7:30 PM">
+                        <div class="upcoming-teams">
+                            <div class="upcoming-team-icon" style="background-color: #17a2b8;">LIB</div>
+                            <span>vs</span>
+                            <div class="upcoming-team-icon" style="background-color: #6f42c1;">MPZ</div>
+                        </div>
+                        <div class="upcoming-info">
+                            <div class="upcoming-date">27 May, 7:30 PM</div>
+                            <i class="fa-solid fa-chevron-right upcoming-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="upcoming-item class-upcoming-bet" data-home="Puntarenas" data-away="Guanacasteca" data-date="28 de Mayo, 2024 - 8:00 PM">
+                        <div class="upcoming-teams">
+                            <div class="upcoming-team-icon" style="background-color: #e83e8c;">PFC</div>
+                            <span>vs</span>
+                            <div class="upcoming-team-icon" style="background-color: #fd7e14;">ADG</div>
+                        </div>
+                        <div class="upcoming-info">
+                            <div class="upcoming-date">28 May, 8:00 PM</div>
+                            <i class="fa-solid fa-chevron-right upcoming-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cómo Funciona Panel -->
+            <div class="charcoal-card">
+                <div class="info-sidebar-title">
+                    <i class="fa-solid fa-circle-question"></i> ¿Cómo Funciona?
+                </div>
+                <div class="how-to-list">
+                    <div class="how-to-item">
+                        <div class="how-to-number">1</div>
+                        <div><strong>Elige tu equipo o resultado:</strong> Selecciona el partido y tu predicción sobre la mesa.</div>
+                    </div>
+                    <div class="how-to-item">
+                        <div class="how-to-number">2</div>
+                        <div><strong>Haz tu apuesta:</strong> Define el monto (mínimo ₡2,000) más el costo del contrato inteligente.</div>
+                    </div>
+                    <div class="how-to-item">
+                        <div class="how-to-number">3</div>
+                        <div><strong>Si tu opción gana:</strong> Recibes tu premio y ganancia neta directamente, procesados por contratos inteligentes autónomos.</div>
+                    </div>
+                </div>
+
+                <div class="fee-disclaimer">
+                    <i class="fa-solid fa-percent"></i>
+                    <div>Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento del servicio y apoyo al local).</div>
+                </div>
+            </div>
+
+        </aside>
+    </main>
+
+    <!-- Modal Overlay Backdrop -->
+    <div class="modal-overlay" id="bet-modal">
+        <div class="modal-content" id="modal-panel">
+            <button class="modal-close-btn" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+
+            <!-- Step 1: Selection Form (Creator Step) -->
+            <div class="select-bet-step" id="modal-step-selection">
+                <div class="modal-title-left">Poner Apuesta sobre la Mesa</div>
+
+                <div class="form-group">
+                    <label>Partido Seleccionado</label>
+                    <div style="font-weight: 800; font-size: 1rem; color: #111;" id="modal-match-name">Saprissa vs Alajuelense</div>
+                    <div style="font-size: 0.8rem; color: #666;" id="modal-match-date">25 de Mayo, 2024 - 8:00 PM</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tu Elección</label>
+                    <div class="team-selection-grid">
+                        <div class="team-option-btn selected" data-choice="1" id="btn-choice-home">
+                            <i class="fa-solid fa-house-chimney"></i>
+                            <span id="choice-home-text">Saprissa</span>
+                        </div>
+                        <div class="team-option-btn" data-choice="3" id="btn-choice-draw">
+                            <i class="fa-solid fa-equals"></i>
+                            <span>Empate</span>
+                        </div>
+                        <div class="team-option-btn" data-choice="2" id="btn-choice-away">
+                            <i class="fa-solid fa-plane-departure"></i>
+                            <span id="choice-away-text">Alajuelense</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Monto de la Apuesta (CRC)</label>
+                    <div class="amount-input-wrapper">
+                        <span class="amount-currency-symbol">₡</span>
+                        <input type="number" id="input-bet-amount" value="5000" min="2000" step="500">
+                    </div>
+                    <div class="amount-preset-row">
+                        <button class="preset-btn" data-value="2000">₡2,000</button>
+                        <button class="preset-btn" data-value="5000">₡5,000</button>
+                        <button class="preset-btn" data-value="10000">₡10,000</button>
+                        <button class="preset-btn" data-value="20000">₡20,000</button>
+                    </div>
+                </div>
+
+                <button class="btn-form-next" id="btn-submit-selection-form">Continuar &nbsp;<i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+
+            <!-- Step 2: Confirmation Screen (Exact replica of aceptar.webp) -->
+            <div class="confirm-bet-step" id="modal-step-confirm" style="display: none;">
+                <div class="success-checkmark-wrapper">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <h3 class="confirm-title">Confirma tu apuesta</h3>
+                <p class="confirm-subtitle">Revisa los detalles antes de ponerla sobre la mesa.</p>
+
+                <!-- Box 1 -->
+                <div class="step-container">
+                    <div class="step-number">1</div>
+                    <div class="match-details-card">
+                        <div class="match-details-row">
+                            <div class="soccer-icon-circle">
+                                <i class="fa-solid fa-futbol"></i>
+                            </div>
+                            <div class="match-card-meta">
+                                <div class="match-card-league" id="confirm-match-title">Saprissa vs Alajuelense</div>
+                                <div class="match-card-teams" id="confirm-match-meta-info">Liga Promerica - Semifinal</div>
+                            </div>
+                        </div>
+
+                        <div class="choice-result-row">
+                            <div class="choice-label-wrapper">
+                                <i class="fa-solid fa-chart-simple"></i>
+                                <div class="choice-text-block">
+                                    <div class="choice-title">Predicción</div>
+                                    <div class="choice-value" id="confirm-choice-label">Ganará Saprissa</div>
+                                </div>
+                            </div>
+                            <div class="multiplier-badge" id="confirm-choice-odds">2.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 2 -->
+                <div class="step-container">
+                    <div class="step-number">2</div>
+                    <div class="calculation-card">
+                        <div class="calc-row">
+                            <span>Monto de Apuesta</span>
+                            <span class="calc-row-value" id="confirm-calc-amount">5,000 CRC</span>
+                        </div>
+                        <div class="calc-row">
+                            <span>Comisión de Creación (5%)</span>
+                            <span class="calc-row-value" id="confirm-calc-fee">250 CRC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box 3 -->
+                <div class="step-container">
+                    <div class="step-number">3</div>
+                    <div class="total-payment-card">
+                        <span class="total-pay-label">TOTAL A PAGAR:</span>
+                        <span class="total-pay-value" id="confirm-calc-total">5,250 CRC</span>
+                    </div>
+                </div>
+
+                <!-- Box 4 -->
+                <div class="step-container" style="margin-bottom: 0;">
+                    <div class="step-number">4</div>
+                    <div style="width: 100%;">
+                        <button class="btn-confirm-accept" id="btn-finalize-bet">
+                            <i class="fa-solid fa-table"></i> Aceptar y poner sobre la mesa
+                        </button>
+                    </div>
+                </div>
+
+                <div class="secure-footnote">
+                    <i class="fa-solid fa-lock"></i> Transacción segura y encriptada
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div class="toast" id="success-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>
+            <strong style="display: block;">¡Apuesta creada con éxito!</strong>
+            <span style="font-size: 0.8rem; color: #cbd5e1;">Tu apuesta ya está sobre la mesa, esperando contrincante.</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div style="margin-bottom: 10px; font-weight: 700; color: #999;">Mejenga.com &copy; 2026. Todos los derechos reservados.</div>
+        <div style="font-size: 0.75rem; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.4;">
+            Mejenga es una plataforma de apuestas deportivas descentralizada P2P sobre Polygon blockchain. Las transacciones son finales y están reguladas de manera autónoma mediante contratos inteligentes y Chainlink oráculos.
+        </div>
+    </footer>
+
+    <!-- Interactive Logic Script -->
+    <script>
+        // DOM Elements
+        const btnOpenBet = document.getElementById('btn-open-bet');
+        const betModal = document.getElementById('bet-modal');
+        const btnCloseModal = document.getElementById('btn-close-modal');
+        const modalStepSelection = document.getElementById('modal-step-selection');
+        const modalStepConfirm = document.getElementById('modal-step-confirm');
+
+        // Selection form fields
+        const modalMatchName = document.getElementById('modal-match-name');
+        const modalMatchDate = document.getElementById('modal-match-date');
+        const btnChoiceHome = document.getElementById('btn-choice-home');
+        const btnChoiceDraw = document.getElementById('btn-choice-draw');
+        const btnChoiceAway = document.getElementById('btn-choice-away');
+        const inputBetAmount = document.getElementById('input-bet-amount');
+        const btnSubmitSelectionForm = document.getElementById('btn-submit-selection-form');
+
+        // Confirm step elements
+        const confirmMatchTitle = document.getElementById('confirm-match-title');
+        const confirmMatchMetaInfo = document.getElementById('confirm-match-meta-info');
+        const confirmChoiceLabel = document.getElementById('confirm-choice-label');
+        const confirmChoiceOdds = document.getElementById('confirm-choice-odds');
+        const confirmCalcAmount = document.getElementById('confirm-calc-amount');
+        const confirmCalcFee = document.getElementById('confirm-calc-fee');
+        const confirmCalcTotal = document.getElementById('confirm-calc-total');
+        const btnFinalizeBet = document.getElementById('btn-finalize-bet');
+        const successToast = document.getElementById('success-toast');
+
+        // State Variables
+        let currentMatch = {
+            home: 'Saprissa',
+            away: 'Alajuelense',
+            date: '25 de Mayo, 2024 - 8:00 PM',
+            league: 'Liga Promerica - Semifinal'
+        };
+        let selectedChoice = '1'; // Default: Home Team
+        let isAcceptingExisting = false; // Whether we are accepting an existing bet
+        let activeBetToAccept = null;
+
+        // Reset and Open Modal for a Match
+        function openBetModal(matchData, isAccepting = false, acceptBetData = null) {
+            currentMatch = matchData;
+            isAcceptingExisting = isAccepting;
+            activeBetToAccept = acceptBetData;
+
+            // Set Form Data
+            modalMatchName.textContent = `${matchData.home} vs ${matchData.away}`;
+            modalMatchDate.textContent = matchData.date;
+
+            document.getElementById('choice-home-text').textContent = matchData.home;
+            document.getElementById('choice-away-text').textContent = matchData.away;
+
+            if (isAccepting) {
+                // If accepting, lock selection and direct to confirmation
+                selectedChoice = acceptBetData.choice;
+                inputBetAmount.value = acceptBetData.amount;
+                showConfirmationScreen();
+            } else {
+                // Regular creation flow
+                selectedChoice = '1';
+                inputBetAmount.value = 5000;
+                resetChoiceButtons();
+                btnChoiceHome.classList.add('selected');
+
+                modalStepSelection.style.display = 'block';
+                modalStepConfirm.style.display = 'none';
+            }
+
+            betModal.classList.add('active');
+        }
+
+        function resetChoiceButtons() {
+            btnChoiceHome.classList.remove('selected');
+            btnChoiceDraw.classList.remove('selected');
+            btnChoiceAway.classList.remove('selected');
+        }
+
+        // Event Listeners for Selection Option Buttons
+        btnChoiceHome.addEventListener('click', () => {
+            resetChoiceButtons();
+            btnChoiceHome.classList.add('selected');
+            selectedChoice = '1';
+        });
+
+        btnChoiceDraw.addEventListener('click', () => {
+            resetChoiceButtons();
+            btnChoiceDraw.classList.add('selected');
+            selectedChoice = '3';
+        });
+
+        btnChoiceAway.addEventListener('click', () => {
+            resetChoiceButtons();
+            btnChoiceAway.classList.add('selected');
+            selectedChoice = '2';
+        });
+
+        // Preset Amount Buttons
+        document.querySelectorAll('.preset-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                inputBetAmount.value = button.getAttribute('data-value');
+            });
+        });
+
+        // Close Modal
+        btnCloseModal.addEventListener('click', () => {
+            betModal.classList.remove('active');
+        });
+
+        betModal.addEventListener('click', (e) => {
+            if (e.target === betModal) {
+                betModal.classList.remove('active');
+            }
+        });
+
+        // Featured Match Button Click
+        btnOpenBet.addEventListener('click', () => {
+            openBetModal({
+                home: 'Saprissa',
+                away: 'Alajuelense',
+                date: '25 de Mayo, 2024 - 8:00 PM',
+                league: 'Liga Promerica - Semifinal'
+            });
+        });
+
+        // Upcoming Matches Click
+        document.querySelectorAll('.class-upcoming-bet').forEach(item => {
+            item.addEventListener('click', () => {
+                const home = item.getAttribute('data-home');
+                const away = item.getAttribute('data-away');
+                const date = item.getAttribute('data-date');
+                openBetModal({
+                    home: home,
+                    away: away,
+                    date: date,
+                    league: 'Liga Promerica'
+                });
+            });
+        });
+
+        // Setup Accept Buttons on existing table rows
+        function attachAcceptListeners() {
+            document.querySelectorAll('.btn-accept-table').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const match = btn.getAttribute('data-match');
+                    const team = btn.getAttribute('data-team');
+                    const amount = btn.getAttribute('data-amount');
+
+                    const teams = match.split(' vs ');
+                    const home = teams[0];
+                    const away = teams[1];
+
+                    let choice = '1';
+                    if (team.includes('Saprissa') || team.includes('Home')) choice = '1';
+                    else if (team.includes('Alajuela') || team.includes('Away')) choice = '2';
+                    else choice = '3';
+
+                    openBetModal({
+                        home: home,
+                        away: away,
+                        date: '25 de Mayo, 2024 - 8:00 PM',
+                        league: 'Liga Promerica - Semifinal'
+                    }, true, {
+                        choice: choice,
+                        amount: parseInt(amount),
+                        teamText: team,
+                        rowElement: btn.closest('tr')
+                    });
+                };
+            });
+        }
+
+        attachAcceptListeners();
+
+        // Calculate and Show Confirmation Screen
+        function showConfirmationScreen() {
+            const amount = parseInt(inputBetAmount.value) || 2000;
+            const fee = Math.floor(amount * 0.05);
+            const total = amount + fee;
+
+            // Format numbers
+            const formattedAmount = amount.toLocaleString('en-US') + ' CRC';
+            const formattedFee = fee.toLocaleString('en-US') + ' CRC';
+            const formattedTotal = total.toLocaleString('en-US') + ' CRC';
+
+            confirmMatchTitle.textContent = `${currentMatch.home} vs ${currentMatch.away}`;
+            confirmMatchMetaInfo.textContent = currentMatch.date;
+
+            // Set choice labels
+            let choiceText = '';
+            let odds = '2.00'; // Default P2P match multiplier
+
+            if (isAcceptingExisting) {
+                choiceText = activeBetToAccept.teamText;
+            } else {
+                if (selectedChoice === '1') {
+                    choiceText = `Ganará ${currentMatch.home}`;
+                } else if (selectedChoice === '2') {
+                    choiceText = `Ganará ${currentMatch.away}`;
+                } else {
+                    choiceText = 'Empate';
+                }
+            }
+
+            confirmChoiceLabel.textContent = choiceText;
+            confirmChoiceOdds.textContent = odds;
+
+            confirmCalcAmount.textContent = formattedAmount;
+            confirmCalcFee.textContent = formattedFee;
+            confirmCalcTotal.textContent = formattedTotal;
+
+            // Transition Panels
+            modalStepSelection.style.display = 'none';
+            modalStepConfirm.style.display = 'block';
+        }
+
+        // Form Submit to Confirmation screen
+        btnSubmitSelectionForm.addEventListener('click', () => {
+            const amount = parseInt(inputBetAmount.value);
+            if (isNaN(amount) || amount < 2000) {
+                alert('El monto mínimo de apuesta es ₡2,000 colones.');
+                return;
+            }
+            showConfirmationScreen();
+        });
+
+        // Finalize Bet Placement and Add to Table
+        btnFinalizeBet.addEventListener('click', () => {
+            const amount = parseInt(inputBetAmount.value) || 5000;
+            const fee = Math.floor(amount * 0.05);
+            const principal = amount;
+            const netPayout = amount * 2;
+
+            if (isAcceptingExisting) {
+                // Remove the row from 'En la Mesa' because it has been matched/accepted!
+                if (activeBetToAccept && activeBetToAccept.rowElement) {
+                    activeBetToAccept.rowElement.remove();
+                }
+
+                // Show matched toast
+                successToast.querySelector('strong').textContent = '¡Apuesta aceptada con éxito!';
+                successToast.querySelector('span').textContent = 'El contrato de apuesta P2P ha sido creado en Polygon.';
+            } else {
+                // Add new row to 'En la Mesa' table
+                const tableBody = document.querySelector('#bets-table tbody');
+
+                let choiceText = '';
+                let choiceClass = 'choice-draw';
+
+                if (selectedChoice === '1') {
+                    choiceText = `Ganará ${currentMatch.home}`;
+                    choiceClass = 'choice-home';
+                } else if (selectedChoice === '2') {
+                    choiceText = `Ganará ${currentMatch.away}`;
+                    choiceClass = 'choice-away';
+                } else {
+                    choiceText = 'Empate';
+                    choiceClass = 'choice-draw';
+                }
+
+                const userAlias = 'user_' + Math.floor(Math.random() * 9000 + 1000);
+                const firstLetter = userAlias.charAt(0).toUpperCase();
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">${firstLetter}</div>
+                            <span>${userAlias}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge-choice ${choiceClass}"><i class="fa-solid fa-shield-halved"></i> ${choiceText}</span>
+                    </td>
+                    <td class="currency">₡${amount.toLocaleString('en-US')}</td>
+                    <td>
+                        <div class="payout-info">
+                            <span class="payout-total currency" style="color: #39d353;">₡${netPayout.toLocaleString('en-US')}</span>
+                            <span class="payout-breakdown">(${ (amount*2 + fee*2).toLocaleString('en-US') } colones - ${ (fee*2).toLocaleString('en-US') } [del 5% de cada jugador, que suma 10%] comisión del contrato)</span>
+                        </div>
+                    </td>
+                    <td style="text-align: right;">
+                        <button class="btn-action-icon btn-accept-table" data-match="${currentMatch.home} vs ${currentMatch.away}" data-team="${selectedChoice === '1' ? 'Ganará ' + currentMatch.away : 'Ganará ' + currentMatch.home}" data-amount="${amount}" title="Aceptar Apuesta">
+                            <i class="fa-solid fa-handshake"></i>
+                        </button>
+                    </td>
+                `;
+
+                tableBody.prepend(newRow);
+                attachAcceptListeners();
+
+                // Show created toast
+                successToast.querySelector('strong').textContent = '¡Apuesta creada con éxito!';
+                successToast.querySelector('span').textContent = 'Tu apuesta ya está sobre la mesa, esperando contrincante.';
+            }
+
+            // Close Modal
+            betModal.classList.remove('active');
+
+            // Trigger Success Toast
+            successToast.classList.add('active');
+            setTimeout(() => {
+                successToast.classList.remove('active');
+            }, 4500);
+        });
+    </script>
+</body>
+</html>
