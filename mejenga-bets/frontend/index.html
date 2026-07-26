@@ -563,47 +563,6 @@
             margin-top: 2px;
         }
 
-        .cynko-warning {
-            margin-top: 15px;
-            background-color: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 0.75rem;
-            color: #fca5a5;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
-
-        .cynko-warning i {
-            margin-top: 2px;
-            color: #ef4444;
-            font-size: 1rem;
-        }
-
-        .modal-cynko-warning {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 15px 0;
-            font-size: 0.78rem;
-            color: #991b1b;
-            text-align: left;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
-        }
-
-        .modal-cynko-warning i {
-            color: #dc2626;
-            font-size: 1.1rem;
-            margin-top: 2px;
-        }
-
         /* Modal Background Backdrop */
         .modal-overlay {
             position: fixed;
@@ -1376,14 +1335,6 @@
                     <i class="fa-solid fa-percent"></i>
                     <div>Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento del servicio y apoyo al local).</div>
                 </div>
-
-                <div class="cynko-warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <strong>ADVERTENCIA IMPORTANTE:</strong> Usa únicamente billeteras Web3 no custodiales (como <strong>MetaMask, Rabby o Coinbase Wallet</strong>).
-                        <br><span style="color: #f87171;">NO utilices billeteras custodiales como Cynko</span>, ya que sus fondos provienen y se devuelven a un pool/billetera caliente única de la empresa. Debido a que los contratos inteligentes de Mejenga retornan los premios y reembolsos automáticamente al remitente directo (<code>msg.sender</code>), cualquier envío desde Cynko causará la pérdida permanente de tus fondos al caer en su pool común.
-                    </div>
-                </div>
             </div>
 
         </aside>
@@ -1496,14 +1447,6 @@
                     <div class="total-payment-card">
                         <span class="total-pay-label">TOTAL A PAGAR:</span>
                         <span class="total-pay-value" id="confirm-calc-total">5,250 CRC</span>
-                    </div>
-                </div>
-
-                <!-- Cynko Custodial Pool Warning in Modal -->
-                <div class="modal-cynko-warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>
-                        <strong>¿Usas MetaMask?</strong> No envíes fondos desde Cynko u otras aplicaciones con pools custodiales compartidos. El contrato inteligente liquida las ganancias directamente al remitente; si usas un pool común, no podrás retirar tus premios ni reclamar reembolsos.
                     </div>
                 </div>
 
