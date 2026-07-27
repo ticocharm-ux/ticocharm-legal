@@ -21,9 +21,17 @@ contract BettingFactory is Ownable, Pausable, ReentrancyGuard {
 
     mapping(uint256 => address[]) public betsByMatch;
 
+    // Seguridad: Whitelist, Verificación de apuestas creadas y Cooldown
+    mapping(address => bool) public whitelist;
+    mapping(address => bool) public isCreatedBet;
+    mapping(address => uint256) public lastCreationTime;
+    uint256 public cooldownTime = 15; // 15 segundos de cooldown por defecto
+
     event BetCreated(address indexed betContract, uint256 matchId, address creator, uint256 amountUSDC);
     event BetAccepted(address indexed betContract, address taker, uint256 amountUSDC);
     event FeeDistributed(address house, address bar, uint256 houseAmount, uint256 barAmount);
+    event AddedToWhitelist(address indexed venue);
+    event RemovedFromWhitelist(address indexed venue);
 
     constructor(
         address _usdc,
@@ -37,11 +45,18 @@ contract BettingFactory is Ownable, Pausable, ReentrancyGuard {
         houseWallet = _houseWallet;
         defaultBarWallet = _defaultBarWallet;
         minimumAmountUSD = _minimumAmountUSD;
+        // Whitelist por defecto para el dueño y billeteras iniciales para facilitar pruebas
+        whitelist[msg.sender] = true;
+        whitelist[_defaultBarWallet] = true;
     }
 
     function createBet(uint256 _matchId, uint8 _team, uint256 _amountUSDC) external whenNotPaused nonReentrant returns (address) {
+        require(whitelist[msg.sender], "No autorizado");
+        require(block.timestamp >= lastCreationTime[msg.sender] + cooldownTime, "Espere para crear otra apuesta");
         require(_amountUSDC >= minimumAmountUSD, "Monto menor al minimo");
         require(_team == 1 || _team == 2, "Equipo invalido");
+
+        lastCreationTime[msg.sender] = block.timestamp;
 
         uint256 fee = (_amountUSDC * feePercent) / 100;
         uint256 principal = _amountUSDC - fee;
@@ -66,11 +81,27 @@ contract BettingFactory is Ownable, Pausable, ReentrancyGuard {
         USDC.transfer(defaultBarWallet, halfFee);
 
         betsByMatch[_matchId].push(address(newBet));
+        isCreatedBet[address(newBet)] = true;
 
         emit BetCreated(address(newBet), _matchId, msg.sender, _amountUSDC);
         emit FeeDistributed(houseWallet, defaultBarWallet, halfFee, halfFee);
 
         return address(newBet);
+    }
+
+    function addToWhitelist(address _venue) external onlyOwner {
+        whitelist[_venue] = true;
+        emit AddedToWhitelist(_venue);
+    }
+
+    // El frontend puede llamar a esta funcion para saber si un local es seguro
+    function removeFromWhitelist(address _venue) external onlyOwner {
+        whitelist[_venue] = false;
+        emit RemovedFromWhitelist(_venue);
+    }
+
+    function setCooldownTime(uint256 _cooldown) external onlyOwner {
+        cooldownTime = _cooldown;
     }
 
     function acceptBet(address _betContract, uint256 _amountUSDC) external whenNotPaused nonReentrant {

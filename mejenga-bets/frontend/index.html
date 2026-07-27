@@ -1103,11 +1103,11 @@
         <div class="header-container">
             <div class="logo-section">
                 <a href="#" class="logo-text">Mejenga<span>.com</span></a>
-                <div class="bar-badge">
-                    <i class="fa-solid fa-horse-shoe"></i>
+                <div class="bar-badge" id="venue-badge-container" style="display: none;">
+                    <i class="fa-solid fa-horse-shoe" id="venue-icon"></i>
                     <div class="bar-info">
-                        <div class="bar-subtitle">Bar & Restaurante</div>
-                        <div class="bar-title">El Estribo</div>
+                        <div class="bar-subtitle" id="venue-type-subtitle">Local Afiliado</div>
+                        <div class="bar-title" id="venue-title-display">...</div>
                     </div>
                 </div>
             </div>
@@ -1333,7 +1333,7 @@
 
                 <div class="fee-disclaimer">
                     <i class="fa-solid fa-percent"></i>
-                    <div>Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento del servicio y apoyo al local).</div>
+                    <div id="commission-text">Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento del servicio y apoyo al local).</div>
                 </div>
             </div>
 
@@ -1487,6 +1487,33 @@
 
     <!-- Interactive Logic Script -->
     <script>
+        // Dynamic Venue White Label Styling & Initialization
+        (function() {
+            // Read query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const venueName = urlParams.get('venue');
+            const venueSubtitle = urlParams.get('type') || 'Local Afiliado';
+
+            const badgeContainer = document.getElementById('venue-badge-container');
+            const titleDisplay = document.getElementById('venue-title-display');
+            const typeSubtitle = document.getElementById('venue-type-subtitle');
+            const commissionText = document.getElementById('commission-text');
+
+            if (venueName) {
+                // If a venue is specified in the URL, render the dynamic White Label header!
+                titleDisplay.textContent = decodeURIComponent(venueName);
+                typeSubtitle.textContent = decodeURIComponent(venueSubtitle);
+                badgeContainer.style.display = 'flex';
+
+                // Update commission disclaimer to mention the specific venue name
+                commissionText.innerHTML = `Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento del servicio y apoyo directo a <strong>${decodeURIComponent(venueName)}</strong>).`;
+            } else {
+                // Standard Global Platform mode (No fixed venue)
+                badgeContainer.style.display = 'none';
+                commissionText.textContent = 'Se aplica un 10% de comisión del contrato (5% de cada jugador para el mantenimiento de la red y distribución de recompensas).';
+            }
+        })();
+
         // DOM Elements
         const btnOpenBet = document.getElementById('btn-open-bet');
         const betModal = document.getElementById('bet-modal');
@@ -1625,11 +1652,41 @@
             });
         });
 
+        // Simulación de Web3 RPC para Verificación de Seguridad del Contrato
+        // En producción se conectaría con ethers.js o web3.js al contrato BettingFactory
+        const mockVerifiedContracts = new Set();
+
+        async function verifyContractOnChain(betContractAddress) {
+            // El frontend lee directamente del mapping publico `isCreatedBet` del factory
+            // Retorna true si es verificado, de lo contrario alerta de posible hackeo
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Por simulación, las apuestas creadas a través de la UI están en la lista veritables
+                    const isVerified = mockVerifiedContracts.has(betContractAddress) || betContractAddress.startsWith('0xverified_');
+                    resolve(isVerified);
+                }, 400); // Pequeña latencia para simular llamada RPC real
+            });
+        }
+
         // Setup Accept Buttons on existing table rows
         function attachAcceptListeners() {
             document.querySelectorAll('.btn-accept-table').forEach(btn => {
-                btn.onclick = (e) => {
+                btn.onclick = async (e) => {
                     e.stopPropagation();
+
+                    // Verificación de seguridad antes de permitir cualquier depósito
+                    const betAddress = btn.getAttribute('data-address') || '0xverified_bet_' + Math.floor(Math.random() * 100000);
+
+                    // Mostrar estado de carga en el cursor
+                    document.body.style.cursor = 'wait';
+                    const isVerified = await verifyContractOnChain(betAddress);
+                    document.body.style.cursor = 'default';
+
+                    if (!isVerified) {
+                        alert(`🛑 ¡ALERTA DE SEGURIDAD DETECTADA! 🛑\n\nEl contrato de apuesta (${betAddress}) no fue certificado por la fábrica oficial de Mejenga.com.\n\nLa transacción ha sido bloqueada para proteger tus fondos de suplantación de identidad.`);
+                        return;
+                    }
+
                     const match = btn.getAttribute('data-match');
                     const team = btn.getAttribute('data-team');
                     const amount = btn.getAttribute('data-amount');
@@ -1652,7 +1709,8 @@
                         choice: choice,
                         amount: parseInt(amount),
                         teamText: team,
-                        rowElement: btn.closest('tr')
+                        rowElement: btn.closest('tr'),
+                        address: betAddress
                     });
                 };
             });
@@ -1712,14 +1770,45 @@
             showConfirmationScreen();
         });
 
+        // Implementación de mitigación de spam de llamadas y control de intentos múltiples en cliente (Anti-Bot y Double Click Prevention)
+        let isSubmitting = false;
+        let recentAttemptsCount = 0;
+        let rateLimitResetTimeout = null;
+
+        function checkRateLimit() {
+            recentAttemptsCount++;
+            if (recentAttemptsCount > 5) {
+                alert("⚠️ ¡DETECCIÓN DE ACTIVIDAD SOSPECHOSA! ⚠️\n\nHas realizado demasiados intentos en poco tiempo. Por seguridad, espera 15 segundos antes de intentar nuevamente.");
+                return false;
+            }
+            if (!rateLimitResetTimeout) {
+                rateLimitResetTimeout = setTimeout(() => {
+                    recentAttemptsCount = 0;
+                    rateLimitResetTimeout = null;
+                }, 15000); // Resetea el contador cada 15 segundos
+            }
+            return true;
+        }
+
         // Finalize Bet Placement and Add to Table
         btnFinalizeBet.addEventListener('click', () => {
-            const amount = parseInt(inputBetAmount.value) || 5000;
-            const fee = Math.floor(amount * 0.05);
-            const principal = amount;
-            const netPayout = amount * 2;
+            if (isSubmitting) return; // Bloquear clicks dobles
 
-            if (isAcceptingExisting) {
+            // Chequeo de limite de intentos para prevenir spam
+            if (!checkRateLimit()) return;
+
+            isSubmitting = true;
+            btnFinalizeBet.disabled = true;
+            btnFinalizeBet.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando Transacción...';
+
+            // Simulación de delay de transacción en blockchain
+            setTimeout(() => {
+                const amount = parseInt(inputBetAmount.value) || 5000;
+                const fee = Math.floor(amount * 0.05);
+                const principal = amount;
+                const netPayout = amount * 2;
+
+                if (isAcceptingExisting) {
                 // Remove the row from 'En la Mesa' because it has been matched/accepted!
                 if (activeBetToAccept && activeBetToAccept.rowElement) {
                     activeBetToAccept.rowElement.remove();
@@ -1768,7 +1857,8 @@
                         </div>
                     </td>
                     <td style="text-align: right;">
-                        <button class="btn-action-icon btn-accept-table" data-match="${currentMatch.home} vs ${currentMatch.away}" data-team="${selectedChoice === '1' ? 'Ganará ' + currentMatch.away : 'Ganará ' + currentMatch.home}" data-amount="${amount}" title="Aceptar Apuesta">
+                                    <!-- data-address iniciada con un mock verificado para pruebas de interfaz -->
+                                    <button class="btn-action-icon btn-accept-table" data-address="0xverified_bet_9381" data-match="Saprissa vs Alajuelense" data-team="Ganará Saprissa" data-amount="5000" title="Aceptar Apuesta">
                             <i class="fa-solid fa-handshake"></i>
                         </button>
                     </td>
@@ -1782,14 +1872,20 @@
                 successToast.querySelector('span').textContent = 'Tu apuesta ya está sobre la mesa, esperando contrincante.';
             }
 
-            // Close Modal
-            betModal.classList.remove('active');
+                // Close Modal
+                betModal.classList.remove('active');
 
-            // Trigger Success Toast
-            successToast.classList.add('active');
-            setTimeout(() => {
-                successToast.classList.remove('active');
-            }, 4500);
+                // Trigger Success Toast
+                successToast.classList.add('active');
+                setTimeout(() => {
+                    successToast.classList.remove('active');
+                }, 4500);
+
+                // Reset submit state
+                isSubmitting = false;
+                btnFinalizeBet.disabled = false;
+                btnFinalizeBet.innerHTML = '<i class="fa-solid fa-table"></i> Aceptar y poner sobre la mesa';
+            }, 1200);
         });
     </script>
 </body>

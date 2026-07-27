@@ -75,11 +75,71 @@ describe("Mejenga P2P Betting System", function () {
     });
   });
 
+  describe("Security: Whitelist, Cooldown & Factory Verification", function () {
+    const betAmount = ethers.utils.parseUnits("100", 6);
+
+    beforeEach(async function () {
+      await mockUSDC.connect(creator).approve(factory.address, betAmount);
+      await mockUSDC.connect(other).approve(factory.address, betAmount);
+    });
+
+    it("Should reject bet creation from non-whitelisted address", async function () {
+      // creator is not on the whitelist yet
+      await expect(
+        factory.connect(creator).createBet(42, 1, betAmount)
+      ).to.be.revertedWith("No autorizado");
+    });
+
+    it("Should allow bet creation after adding to whitelist", async function () {
+      await factory.addToWhitelist(creator.address);
+      expect(await factory.whitelist(creator.address)).to.be.true;
+
+      const tx = await factory.connect(creator).createBet(42, 1, betAmount);
+      const receipt = await tx.wait();
+      const betAddress = receipt.events.find(e => e.event === "BetCreated").args.betContract;
+
+      expect(await factory.isCreatedBet(betAddress)).to.be.true;
+    });
+
+    it("Should reject creation if called within the cooldown period", async function () {
+      await factory.addToWhitelist(creator.address);
+
+      // First bet creation
+      await factory.connect(creator).createBet(42, 1, betAmount);
+
+      // Second bet creation immediately should fail due to cooldown
+      await mockUSDC.connect(creator).approve(factory.address, betAmount);
+      await expect(
+        factory.connect(creator).createBet(42, 1, betAmount)
+      ).to.be.revertedWith("Espere para crear otra apuesta");
+    });
+
+    it("Should allow creation after cooldown time passes or if cooldown is set to 0", async function () {
+      await factory.addToWhitelist(creator.address);
+      await factory.connect(creator).createBet(42, 1, betAmount);
+
+      // Reduce cooldown to 0 to test bypass
+      await factory.setCooldownTime(0);
+      await mockUSDC.connect(creator).approve(factory.address, betAmount);
+
+      const tx = await factory.connect(creator).createBet(42, 1, betAmount);
+      const receipt = await tx.wait();
+      const betAddress = receipt.events.find(e => e.event === "BetCreated").args.betContract;
+      expect(await factory.isCreatedBet(betAddress)).to.be.true;
+    });
+
+    it("Should correctly track isCreatedBet for factory-created contracts only", async function () {
+      expect(await factory.isCreatedBet(other.address)).to.be.false;
+    });
+  });
+
   describe("Bet Creation", function () {
     const betAmount = ethers.utils.parseUnits("100", 6); // 100 USDC
 
     beforeEach(async function () {
       await mockUSDC.connect(creator).approve(factory.address, betAmount);
+      // Whitelist creator for standard bet tests
+      await factory.addToWhitelist(creator.address);
     });
 
     it("Should create a bet successfully with correct fee distribution", async function () {
@@ -140,6 +200,7 @@ describe("Mejenga P2P Betting System", function () {
     let bet;
 
     beforeEach(async function () {
+      await factory.addToWhitelist(creator.address);
       await mockUSDC.connect(creator).approve(factory.address, creatorAmount);
       const tx = await factory.connect(creator).createBet(101, 1, creatorAmount);
       const receipt = await tx.wait();
@@ -206,6 +267,7 @@ describe("Mejenga P2P Betting System", function () {
 
     beforeEach(async function () {
       // Create and accept a bet
+      await factory.addToWhitelist(creator.address);
       await mockUSDC.connect(creator).approve(factory.address, betAmount);
       let tx = await factory.connect(creator).createBet(202, 1, betAmount);
       let receipt = await tx.wait();
