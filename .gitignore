@@ -1,0 +1,9 @@
+node_modules/
+mejenga-bets/node_modules/
+mejenga-bets/artifacts/
+mejenga-bets/cache/
+mejenga-bets/coverage/
+mejenga-bets/typechain-types/
+mejenga-bets/coverage.json
+.env
+.openzeppelin/
