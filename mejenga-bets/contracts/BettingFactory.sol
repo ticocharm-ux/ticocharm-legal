@@ -105,6 +105,7 @@ contract BettingFactory is Ownable, Pausable, ReentrancyGuard {
     }
 
     function acceptBet(address _betContract, uint256 _amountUSDC) external whenNotPaused nonReentrant {
+        require(isCreatedBet[_betContract], "Invalid bet contract");
         SimpleBet bet = SimpleBet(_betContract);
         require(!bet.isMatched(), "Bet already matched");
 
